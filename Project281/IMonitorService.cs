@@ -8,5 +8,7 @@ namespace Project281
 {
     internal interface IMonitorService
     {
+        void StartMonitoring();
+        void StopMonitoring();
     }
 }

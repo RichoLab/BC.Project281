@@ -43,6 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlertHandler.cs" />
+    <Compile Include="FileWatcher.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="IMonitorService.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Project281
@@ -19,6 +20,7 @@ namespace Project281
         //Field
         string directoryPath;
         FileSystemWatcher watcher;
+        Thread mainThread;
 
         //Property
         public string DirectoryPath 
@@ -40,19 +42,25 @@ namespace Project281
         //Constuctor
         public FileWatcher()
         {
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            this.watcher = watcher;
+            directoryPath = Directory.GetCurrentDirectory();
         }
 
         public FileWatcher(string path)
         {
-            FileSystemWatcher watcher = new FileSystemWatcher(path);
-            this.watcher = watcher;
+            directoryPath = path;
         }
 
         //Methods
         public void StartMonitoring()
         {
+            Thread mainThread = new Thread(startMethod);
+            this.mainThread = mainThread;
+            this.mainThread.Start();
+        }
+        void startMethod()
+        {
+            FileSystemWatcher watcher = new FileSystemWatcher(directoryPath);
+            this.watcher = watcher;
             watcher.Changed += HandleFileEvent;
             watcher.Renamed += HandleFileEvent;
             watcher.Deleted += HandleFileEvent;
@@ -72,6 +80,7 @@ namespace Project281
         public void StopMonitoring()
         {
             watcher.EnableRaisingEvents = false;
+            mainThread.Abort();
         }
 
         private void HandleFileEvent(object sender, FileSystemEventArgs e)

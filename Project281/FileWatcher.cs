@@ -31,7 +31,6 @@ namespace Project281
                 if (Directory.Exists(value))
                 {
                     directoryPath = value;
-                    watcher.Path = value;
                 } else
                 {
                     throw new DirectoryNotFoundException($"The specified directory does not exist: {value}");

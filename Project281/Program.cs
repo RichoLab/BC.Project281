@@ -12,7 +12,7 @@ namespace Project281
     {
         static void Main(string[] args)
         {
-
+            throw new SecurityBreachException();
         }
     }
 }

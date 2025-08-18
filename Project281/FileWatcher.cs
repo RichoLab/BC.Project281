@@ -2,43 +2,43 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Project281
+namespace Project281_Ryno_File
 {
-    //Delegate
     public delegate void delFileChange(string typeOfChange, FileSystemEventArgs e);
 
-    internal class FileWatcher: IMonitorService
+    internal class FileWatcher : IMonitorService
     {
-        //Events
+        // Events
         public event delFileChange onFileChange;
 
-        //Field
+        // Fields
         string directoryPath;
         FileSystemWatcher watcher;
         Thread mainThread;
 
-        //Property
-        public string DirectoryPath 
-        { 
+        // Property
+        public string DirectoryPath
+        {
             get => directoryPath;
-            set 
-            { 
+            set
+            {
                 if (Directory.Exists(value))
                 {
                     directoryPath = value;
-                } else
+                }
+                else
                 {
                     throw new DirectoryNotFoundException($"The specified directory does not exist: {value}");
                 }
             }
         }
 
-        //Constuctor
+        // Constructor
         public FileWatcher()
         {
             directoryPath = Directory.GetCurrentDirectory();
@@ -46,32 +46,31 @@ namespace Project281
 
         public FileWatcher(string path)
         {
-            directoryPath = path;
+            DirectoryPath = path;
         }
 
-        //Methods
+        // Methods
         public void StartMonitoring()
         {
-            Thread mainThread = new Thread(startMethod);
-            this.mainThread = mainThread;
-            this.mainThread.Start();
+            mainThread = new Thread(startMethod);
+            mainThread.Start();
         }
+
         void startMethod()
         {
-            FileSystemWatcher watcher = new FileSystemWatcher(directoryPath);
-            this.watcher = watcher;
+            watcher = new FileSystemWatcher(directoryPath);
             watcher.Changed += HandleFileEvent;
             watcher.Renamed += HandleFileEvent;
             watcher.Deleted += HandleFileEvent;
             watcher.Created += HandleFileEvent;
 
-            watcher.NotifyFilter = NotifyFilters.Attributes      // file attributes (e.g., read-only flag) changed
-                                 | NotifyFilters.CreationTime    // creation date changed
-                                 | NotifyFilters.DirectoryName   // folder renamed
-                                 | NotifyFilters.FileName        // file renamed
-                                 | NotifyFilters.LastAccess      // last opened time changed
-                                 | NotifyFilters.LastWrite       // content modified
-                                 | NotifyFilters.Security;       // permissions changed
+            watcher.NotifyFilter = NotifyFilters.Attributes
+                                 | NotifyFilters.CreationTime
+                                 | NotifyFilters.DirectoryName
+                                 | NotifyFilters.FileName
+                                 | NotifyFilters.LastAccess
+                                 | NotifyFilters.LastWrite
+                                 | NotifyFilters.Security;
 
             watcher.EnableRaisingEvents = true;
         }
@@ -79,7 +78,8 @@ namespace Project281
         public void StopMonitoring()
         {
             watcher.EnableRaisingEvents = false;
-            mainThread.Abort();
+            if (mainThread != null && mainThread.IsAlive)
+                mainThread.Abort();
         }
 
         private void HandleFileEvent(object sender, FileSystemEventArgs e)

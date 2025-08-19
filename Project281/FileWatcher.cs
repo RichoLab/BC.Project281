@@ -11,15 +11,19 @@ namespace Project281_Ryno_File
 {
     public delegate void delFileChange(string typeOfChange, FileSystemEventArgs e);
 
+    public delegate void delSecurity(string reason, string path);
+
     internal class FileWatcher : IMonitorService
     {
         // Events
         public event delFileChange onFileChange;
+        public event delSecurity onSecurity;
 
         // Fields
         string directoryPath;
         FileSystemWatcher watcher;
         Thread mainThread;
+        volatile bool _running;
 
         // Property
         public string DirectoryPath
@@ -52,7 +56,11 @@ namespace Project281_Ryno_File
         // Methods
         public void StartMonitoring()
         {
-            mainThread = new Thread(startMethod);
+            _running = true;
+            mainThread = new Thread(startMethod)
+            {
+                IsBackground = true
+            };
             mainThread.Start();
         }
 
@@ -73,18 +81,45 @@ namespace Project281_Ryno_File
                                  | NotifyFilters.Security;
 
             watcher.EnableRaisingEvents = true;
+
+            while (_running)
+                Thread.Sleep(200);
         }
 
         public void StopMonitoring()
         {
-            watcher.EnableRaisingEvents = false;
+            _running = false;
+
+            if (watcher != null)
+            {
+                watcher.EnableRaisingEvents = false;
+
+                watcher.Changed -= HandleFileEvent;
+                watcher.Renamed -= HandleFileEvent;
+                watcher.Deleted -= HandleFileEvent;
+                watcher.Created -= HandleFileEvent;
+
+                watcher.Dispose();
+                watcher = null;
+            }
+
             if (mainThread != null && mainThread.IsAlive)
-                mainThread.Abort();
+                mainThread.Join();
         }
 
         private void HandleFileEvent(object sender, FileSystemEventArgs e)
         {
             onFileChange?.Invoke(e.ChangeType.ToString(), e);
+
+            if (e.ChangeType == WatcherChangeTypes.Deleted)
+                onSecurity?.Invoke("Deletion detected", e.FullPath);
+
+            // 2) Renamed to .exe (basic example)
+            if (e is RenamedEventArgs r &&
+                string.Equals(Path.GetExtension(r.FullPath), ".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                onSecurity?.Invoke("Renamed to .exe", r.FullPath);
+            }
         }
     }
 }

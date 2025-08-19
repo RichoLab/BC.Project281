@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminAuth.cs" />
     <Compile Include="AlertHandler.cs" />
     <Compile Include="FileWatcher.cs" />
     <Compile Include="ILogger.cs" />

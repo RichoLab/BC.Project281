@@ -15,5 +15,17 @@ namespace Project281_Ryno_File
             Console.WriteLine($"[ALERT] {typeOfChange} detected -> {e.FullPath}");
             Console.ResetColor();
         }
+
+        public void DisplaySecurity(string reason, string path = null)
+        {
+            try { Console.Beep(); } catch { }
+            var prev = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            if (string.IsNullOrWhiteSpace(path))
+                Console.WriteLine($"[SECURITY] {reason}");
+            else
+                Console.WriteLine($"[SECURITY] {reason} -> {path}");
+            Console.ForegroundColor = prev;
+        }
     }
 }

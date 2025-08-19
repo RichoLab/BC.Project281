@@ -31,13 +31,47 @@ namespace Project281_Ryno_File
                 // Subscribe events
                 watcher.onFileChange += logger.LogChange;
                 watcher.onFileChange += alertHandler.DisplayAlert;
+                watcher.onSecurity   += alertHandler.DisplaySecurity;
 
                 // Start monitoring
                 watcher.StartMonitoring();
                 Console.WriteLine($"Monitoring started on: {path}");
                 Console.WriteLine("Press 'q' to quit...\n");
+                Console.WriteLine("Tip: Press 'A' for admin (view last 10 log lines).");
 
-                while (Console.ReadKey(true).Key != ConsoleKey.Q) { }
+
+                while (Console.ReadKey(true).Key != ConsoleKey.Q) 
+                {
+                    // Admin option
+                    Console.WriteLine("Press 'A' for admin, any other key to continue...");
+                    var k2 = Console.ReadKey(true).Key;
+                    if (k2 == ConsoleKey.A)
+                    {
+                        Console.Write("Admin password: ");
+                        string pwd = Console.ReadLine(); 
+                        if (AdminAuth.Verify(pwd))
+                        {
+                            string logPath = "log.txt"; 
+                            if (File.Exists(logPath))
+                            {
+                                var lines = File.ReadAllLines(logPath);
+                                int start = Math.Max(0, lines.Length - 10);
+                                Console.WriteLine("---- Last 10 log lines ----");
+                                for (int i = start; i < lines.Length; i++)
+                                    Console.WriteLine(lines[i]);
+                                Console.WriteLine("---------------------------");
+                            }
+                            else
+                            {
+                                Console.WriteLine("No log file yet.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Access denied.");
+                        }
+                    }
+                }
 
                 watcher.StopMonitoring();
                 Console.WriteLine("Monitoring stopped. Goodbye!");

@@ -14,4 +14,3 @@ namespace Project281_Ryno_File
         public static bool Verify(string input) => input == Password;
     }
 }
-}

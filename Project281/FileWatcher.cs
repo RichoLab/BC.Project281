@@ -114,7 +114,6 @@ namespace Project281_Ryno_File
             if (e.ChangeType == WatcherChangeTypes.Deleted)
                 onSecurity?.Invoke("Deletion detected", e.FullPath);
 
-            // 2) Renamed to .exe (basic example)
             if (e is RenamedEventArgs r &&
                 string.Equals(Path.GetExtension(r.FullPath), ".exe", StringComparison.OrdinalIgnoreCase))
             {

@@ -13,7 +13,6 @@ namespace Project281_Ryno_File
         {
             Console.WriteLine("=== Smart Document Monitoring & Alert System ===");
 
-            // Ask user for directory
             Console.Write("Enter directory path to monitor: ");
             string path = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(path))
@@ -23,17 +22,14 @@ namespace Project281_Ryno_File
 
             try
             {
-                // Initialize core objects
                 FileWatcher watcher = new FileWatcher(path);
                 Logger logger = new Logger("log.txt");
                 AlertHandler alertHandler = new AlertHandler();
 
-                // Subscribe events
                 watcher.onFileChange += logger.LogChange;
                 watcher.onFileChange += alertHandler.DisplayAlert;
                 watcher.onSecurity   += alertHandler.DisplaySecurity;
 
-                // Start monitoring
                 watcher.StartMonitoring();
                 Console.WriteLine($"Monitoring started on: {path}");
                 Console.WriteLine("Press 'q' to quit...\n");
@@ -42,7 +38,6 @@ namespace Project281_Ryno_File
 
                 while (Console.ReadKey(true).Key != ConsoleKey.Q) 
                 {
-                    // Admin option
                     Console.WriteLine("Press 'A' for admin, any other key to continue...");
                     var k2 = Console.ReadKey(true).Key;
                     if (k2 == ConsoleKey.A)
@@ -83,3 +78,4 @@ namespace Project281_Ryno_File
         }
     }
 }
+

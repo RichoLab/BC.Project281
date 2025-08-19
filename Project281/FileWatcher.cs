@@ -15,17 +15,14 @@ namespace Project281_Ryno_File
 
     internal class FileWatcher : IMonitorService
     {
-        // Events
         public event delFileChange onFileChange;
         public event delSecurity onSecurity;
 
-        // Fields
         string directoryPath;
         FileSystemWatcher watcher;
         Thread mainThread;
         volatile bool _running;
 
-        // Property
         public string DirectoryPath
         {
             get => directoryPath;
@@ -42,7 +39,6 @@ namespace Project281_Ryno_File
             }
         }
 
-        // Constructor
         public FileWatcher()
         {
             directoryPath = Directory.GetCurrentDirectory();
@@ -53,7 +49,6 @@ namespace Project281_Ryno_File
             DirectoryPath = path;
         }
 
-        // Methods
         public void StartMonitoring()
         {
             _running = true;
